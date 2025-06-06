@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Raketa\BackendTestTask\Repository\Entity;
+namespace Raketa\BackendTestTask\Domain;
 
 readonly class Product
 {
@@ -12,8 +12,8 @@ readonly class Product
         private bool $isActive,
         private string $category,
         private string $name,
-        private string $description,
-        private string $thumbnail,
+        private ?string $description,
+        private ?string $thumbnail,
         private float $price,
     ) {
     }
@@ -43,12 +43,12 @@ readonly class Product
         return $this->name;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function getThumbnail(): string
+    public function getThumbnail(): ?string
     {
         return $this->thumbnail;
     }

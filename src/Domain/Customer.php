@@ -11,7 +11,7 @@ final readonly class Customer
         private string $firstName,
         private string $lastName,
         private string $middleName,
-        private string $email,
+        private string $email
     ) {
     }
 

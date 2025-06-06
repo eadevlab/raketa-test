@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Raketa\BackendTestTask\View;
 
 use Raketa\BackendTestTask\Domain\Cart;
+use Raketa\BackendTestTask\Domain\CartItem;
 use Raketa\BackendTestTask\Repository\ProductRepository;
 
 readonly class CartView
@@ -18,7 +19,13 @@ readonly class CartView
     {
         $data = [
             'uuid' => $cart->getUuid(),
-            'customer' => [
+            'payment_method' => $cart->getPaymentMethod(),
+            'customer' => [],
+            'items' => [],
+        ];
+
+        if($cart->getCustomer()) {
+            $data['customer'] = [
                 'id' => $cart->getCustomer()->getId(),
                 'name' => implode(' ', [
                     $cart->getCustomer()->getLastName(),
@@ -26,20 +33,31 @@ readonly class CartView
                     $cart->getCustomer()->getMiddleName(),
                 ]),
                 'email' => $cart->getCustomer()->getEmail(),
-            ],
-            'payment_method' => $cart->getPaymentMethod(),
-        ];
+            ];
+        }
+
+        $productsList = $this->productRepository->getByUuids(
+            array_map( fn(CartItem $item): string => $item->getProductUuid(), $cart->getItems())
+        );
+        $products = [];
+        foreach ($productsList as $product) {
+            $products[$product->getUuid()] = $product;
+        }
+        unset($productsList);
 
         $total = 0;
-        $data['items'] = [];
+
         foreach ($cart->getItems() as $item) {
             $total += $item->getPrice() * $item->getQuantity();
-            $product = $this->productRepository->getByUuid($item->getProductUuid());
+            $product = $products[$item->getProductUuid()] ?? null;
+            if (!$product) {
+                continue;
+            }
 
             $data['items'][] = [
                 'uuid' => $item->getUuid(),
                 'price' => $item->getPrice(),
-                'total' => $total,
+                'total' => $item->getPrice() * $item->getQuantity(),
                 'quantity' => $item->getQuantity(),
                 'product' => [
                     'id' => $product->getId(),

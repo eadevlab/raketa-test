@@ -8,9 +8,9 @@ final class Cart
 {
     public function __construct(
         readonly private string $uuid,
-        readonly private Customer $customer,
-        readonly private string $paymentMethod,
-        private array $items,
+        private ?Customer $customer = null,
+        private ?string $paymentMethod = null,
+        private array $items = [],
     ) {
     }
 
@@ -19,12 +19,12 @@ final class Cart
         return $this->uuid;
     }
 
-    public function getCustomer(): Customer
+    public function getCustomer(): ?Customer
     {
         return $this->customer;
     }
 
-    public function getPaymentMethod(): string
+    public function getPaymentMethod(): ?string
     {
         return $this->paymentMethod;
     }
@@ -37,5 +37,15 @@ final class Cart
     public function addItem(CartItem $item): void
     {
         $this->items[] = $item;
+    }
+
+    public function setCustomer(Customer $customer): void
+    {
+        $this->customer = $customer;
+    }
+
+    public function setPaymentMethod(?string $paymentMethod): void
+    {
+        $this->paymentMethod = $paymentMethod;
     }
 }

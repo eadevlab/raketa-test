@@ -5,28 +5,41 @@ declare(strict_types = 1);
 namespace Raketa\BackendTestTask\Repository;
 
 use Doctrine\DBAL\Connection;
-use Raketa\BackendTestTask\Repository\Entity\Product;
+use Raketa\BackendTestTask\Domain\Product;
+use Exception;
 
-class ProductRepository
+final readonly class ProductRepository
 {
-    private Connection $connection;
 
-    public function __construct(Connection $connection)
+    public function __construct(private Connection $connection)
     {
-        $this->connection = $connection;
     }
 
     public function getByUuid(string $uuid): Product
     {
-        $row = $this->connection->fetchOne(
-            "SELECT * FROM products WHERE uuid = " . $uuid,
-        );
+        $rows = $this->getByUuids([$uuid]);
 
         if (empty($row)) {
             throw new Exception('Product not found');
         }
 
-        return $this->make($row);
+        return $row[0];
+    }
+
+    public function getByUuids(array $uuids): array
+    {
+        return array_map(
+            static fn (array $row): Product => $this->make($row),
+            $this->connection->fetchAllAssociative(
+                "SELECT * FROM products WHERE uuid IN (:uuids)",
+                [
+                    'uuids' => $uuids,
+                ],
+                [
+                    'uuids' => \Doctrine\DBAL\ArrayParameterType::STRING
+                ]
+            )
+        );
     }
 
     public function getByCategory(string $category): array
@@ -34,7 +47,10 @@ class ProductRepository
         return array_map(
             static fn (array $row): Product => $this->make($row),
             $this->connection->fetchAllAssociative(
-                "SELECT id FROM products WHERE is_active = 1 AND category = " . $category,
+                "SELECT * FROM products WHERE is_active = 1 AND category = :category",
+                [
+                    'category' => $category,
+                ]
             )
         );
     }

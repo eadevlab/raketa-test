@@ -2,7 +2,7 @@
 
 namespace Raketa\BackendTestTask\View;
 
-use Raketa\BackendTestTask\Repository\Entity\Product;
+use Raketa\BackendTestTask\Domain\Product;
 use Raketa\BackendTestTask\Repository\ProductRepository;
 
 readonly class ProductsView
