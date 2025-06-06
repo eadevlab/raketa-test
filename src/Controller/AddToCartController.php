@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Raketa\BackendTestTask\Controller;
 
 use Psr\Http\Message\RequestInterface;
@@ -41,7 +43,7 @@ readonly class AddToCartController
                 Uuid::uuid4()->toString(),
                 $product->getUuid(),
                 $product->getPrice(),
-                $rawRequest['quantity'],
+                $rawRequest['quantity']
             ));
 
             $this->cartManager->saveCart($cart);

@@ -90,8 +90,6 @@ if (! $cart) {
 ```
 Область видимости аттрибутов можно сделать и private, public ничем не оправдан
 
-### [GetProductsController.php](src/Controller/GetProductsController.php) `(src/Controller/GetProductsController.php)`
-
 ### [Cart.php](src/Domain/Cart.php) `(src/Domain/Cart.php)`
 ```php
 readonly private Customer $customer,
@@ -266,7 +264,5 @@ $product = $this->productRepository->getByUuid($item->getProductUuid());
 
 ## Что сделано:
 
-- Рефакторинг [schema.init.sql](migrations/schema.init.sql)
-- Класс `src/Controller/JsonResponse.php`
-  - перенесен в `src/Utils/Http/Response/JsonResponse.php`
-  - добавлен дефолтный хидер
+- Рефакторинг
+- Переписал немного коннектор к редису
